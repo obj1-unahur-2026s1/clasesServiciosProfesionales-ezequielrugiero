@@ -1,9 +1,49 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
+describe "Test de etapa 1" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  test "Univesidades" {
+    var unaSanMartin = new Universidad(provincia = "Buenos Aires", 
+    onorariosRecomedados = 3500)
+
+    var unaRosario = new Universidad(provincia = "Santa Fe", 
+    onorariosRecomedados = 2800)
+
+    var unaCorrientes = new Universidad(provincia = "Corrientes",
+    onorariosRecomedados = 4200)
+
+    var unaHur = new Universidad(provincia = "Buenos Aires",
+    onorariosRecomedados = 8800)
+   
+   assert.equals(4200, unaCorrientes.onorariosRecomedados())
+  }
+
+  test "Profesionales" {
+    const unaSanMartin = new Universidad(provincia = "Buenos Aires", 
+    onorariosRecomedados = 3500)
+
+    const unaRosario = new Universidad(provincia = "Santa Fe", 
+    onorariosRecomedados = 2800)
+
+    const unaCorrientes = new Universidad(provincia = "Corrientes",
+    onorariosRecomedados = 4200)
+
+    const unaHur = new Universidad(provincia = "Buenos Aires",
+    onorariosRecomedados = 8800)
+
+   const juana = new ProfesionalesViculados(universidad=unaRosario)
+   const melisa = new ProfesionalesAsociados(universidad=unaCorrientes)
+   const rocio = new ProfesioanlesLibre(universidad = unaHur, provinciaHabilitadas = ["Santa Fe", "Cordoba", "Buenos Aires"],  honorariosPorHora = 5000)
+   const luciana = new ProfesioanlesLibre(universidad = unaRosario, provinciaHabilitadas = ["Santa Fe", "Entre Rios"],  honorariosPorHora = 3200)
+   
+   const donPedro = new EmpresaDeServicios(
+      profesionaeles = [juana, melisa, rocio, luciana],
+      onorarios = 3500)
+   donPedro.elProfesionalMasBarato()
+   luciana.habilitarEstaProvincia("Corrientes")
+   luciana.habilitarEstaProvincia("Misiones")
+   assert.equals(juana, donPedro.elProfesionalMasBarato())
+   assert.notThat(donPedro.genteAcotada())
   }
 
 }
