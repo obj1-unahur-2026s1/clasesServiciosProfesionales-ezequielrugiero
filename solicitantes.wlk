@@ -14,12 +14,12 @@ class Instituciones{
 }
 
 class Clubes{
-    var property listaProvinicia =[]
-    var property provinciaActual
+    var property listaProvinicias =[]
+    
    
     
     method puedeSeratendido(unProfesional){
-        return listaProvinicia.any({p=>unProfesional.proviciaHabilitadas().contains(p)})
+        return listaProvinicias.any({p=>unProfesional.proviciaHabilitadas().contains(p)})
     }
 
 }

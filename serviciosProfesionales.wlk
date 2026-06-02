@@ -1,7 +1,7 @@
 import solicitantes.*
 class Universidad{
   var property provincia 
-  var property onorariosRecomedados
+  var property honorariosRecomedados
   var property donaciones = 0
 
   method recibirDonaciones(unMonto){
@@ -15,7 +15,7 @@ class ProfesionalesViculados{
    var property provinciaHabilitadas = [universidad.provincia()]
    var property importeCobrado = 0
 
-   method honorariosPorHora() = universidad.onorariosRecomedados()
+   method honorariosPorHora() = universidad.honorariosRecomedados()
    method habilitarEstaProvincia(unaProvinicia){
     provinciaHabilitadas.add(unaProvinicia)
   }
@@ -48,6 +48,7 @@ class ProfesioanlesLibre{
   var property provinciaHabilitadas 
   var property honorariosPorHora
   var property importeCobrado = 0
+
   method habilitarEstaProvincia(unaProvinicia){
     provinciaHabilitadas.add(unaProvinicia)
   }
@@ -65,7 +66,7 @@ class ProfesioanlesLibre{
 
 class EmpresaDeServicios{
   const property profesionales = []
-  var property onorarios
+  var property honorarios
   const property LisCliente =[]
 
   method contratarA(unProfesiona){
@@ -77,7 +78,7 @@ class EmpresaDeServicios{
   } 
 
   method profesionalesMasCaro(){
-    return profesionales.filter({p=>p.honorariosPorHora()> self.onorarios()})
+    return profesionales.filter({p=>p.honorariosPorHora()> self.honorarios()})
   }
 
   method universidadesFormadoras(){
@@ -98,16 +99,16 @@ class EmpresaDeServicios{
   // metodo 1, para mi es el correcto, pero se me ocurrio otro.
   method darServicio(unSolicitante){
     if(self.satisfacerAlSolicitante(unSolicitante)){
-       const profesionalAsignado = profesionales.find(self.satisfacerAlSolicitante(unSolicitante))
-          profesionalAsignado.cobra(profesionalAsignado.honorariosPorHora()+ 4000)
+       const profesionalAsignado = profesionales.find({p=>p.satisfacerAlSolicitante(unSolicitante)})
+          profesionalAsignado.cobrar(profesionalAsignado.honorariosPorHora()+ 4000)
           LisCliente.add(unSolicitante)
     }
   }
 // esto para mi funciona pero tengo una reduncia, 
   method darServicio2(unSolicitante){
     if(unSolicitante.puedeSerAtendido(self.satisfacerAlSolicitante(unSolicitante))){
-      const profesionalAsignado = profesionales.find(self.satisfacerAlSolicitante(unSolicitante))
-          profesionalAsignado.cobra(profesionalAsignado.honorariosPorHora()+ 4000)
+      const profesionalAsignado = profesionales.find({p=>p.satisfacerAlSolicitante(unSolicitante)})
+          profesionalAsignado.cobrar(profesionalAsignado.honorariosPorHora() + 4000)
           LisCliente.add(unSolicitante)
     
     }
@@ -124,12 +125,13 @@ class EmpresaDeServicios{
 // Las dos esta bien o una sola ? 
   method profesionalPocoActrativo(unProfesional){
     return profesionales.any({p=>p.provinciaHabilitadas()==unProfesional.provinciaHabilitadas() 
-           and p.onorarios()< unProfesional.onorarios()})
+           and p.honorarios()< unProfesional.honorarios()})
   }
 
   method profesionalPocoActrivo2(unProfesional){
-    return profesionales.any({p=>p.provinciaHabilitadas().any({p=>unProfesional.provinciaHabilitadas(p)}) 
-    and p.onorarios()< unProfesional.onorarios()})
+    return unProfesional.provinciaHabilitadas().all({prov=>profesionales.any({p=>p.provinciaHabilitadas().contains(prov) 
+            and p.honorarios() < unProfesional.honorarios()})}) 
+    
   }
 // con contein no se puede hacer la comparacion.
   
@@ -138,6 +140,8 @@ class EmpresaDeServicios{
 
 object asociaciónProfesionalesLitoral {
   var recaudado = 0
+
+  method recaudado()=recaudado
   method recibirRecaudacion(unMonto){
     recaudado = recaudado + unMonto
       }

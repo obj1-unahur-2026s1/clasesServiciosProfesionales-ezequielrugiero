@@ -1,35 +1,35 @@
 import serviciosProfesionales.*
-
+import solicitantes.*
 describe "Test de etapa 1" {
 
   test "Univesidades" {
-    var unaSanMartin = new Universidad(provincia = "Buenos Aires", 
-    onorariosRecomedados = 3500)
+    const unaSanMartin = new Universidad(provincia = "Buenos Aires", 
+    honorariosRecomedados = 3500)
 
-    var unaRosario = new Universidad(provincia = "Santa Fe", 
-    onorariosRecomedados = 2800)
+    const unaRosario = new Universidad(provincia = "Santa Fe", 
+    honorariosRecomedados = 2800)
 
-    var unaCorrientes = new Universidad(provincia = "Corrientes",
-    onorariosRecomedados = 4200)
+    const unaCorrientes = new Universidad(provincia = "Corrientes",
+    honorariosRecomedados = 4200)
 
-    var unaHur = new Universidad(provincia = "Buenos Aires",
-    onorariosRecomedados = 8800)
+    const unaHur = new Universidad(provincia = "Buenos Aires",
+    honorariosRecomedados = 8800)
    
    assert.equals(4200, unaCorrientes.onorariosRecomedados())
   }
 
   test "Profesionales" {
     const unaSanMartin = new Universidad(provincia = "Buenos Aires", 
-    onorariosRecomedados = 3500)
+    honorariosRecomedados = 3500)
 
     const unaRosario = new Universidad(provincia = "Santa Fe", 
-    onorariosRecomedados = 2800)
+    honorariosRecomedados = 2800)
 
     const unaCorrientes = new Universidad(provincia = "Corrientes",
-    onorariosRecomedados = 4200)
+    honorariosRecomedados = 4200)
 
     const unaHur = new Universidad(provincia = "Buenos Aires",
-    onorariosRecomedados = 8800)
+    honorariosRecomedados = 8800)
 
    const juana = new ProfesionalesViculados(universidad=unaRosario)
    const melisa = new ProfesionalesAsociados(universidad=unaCorrientes)
@@ -37,8 +37,8 @@ describe "Test de etapa 1" {
    const luciana = new ProfesioanlesLibre(universidad = unaRosario, provinciaHabilitadas = ["Santa Fe", "Entre Rios"],  honorariosPorHora = 3200)
    
    const donPedro = new EmpresaDeServicios(
-      profesionaeles = [juana, melisa, rocio, luciana],
-      onorarios = 3500)
+      profesionales = [juana, melisa, rocio, luciana],
+      honorarios = 3500)
    donPedro.elProfesionalMasBarato()
    luciana.habilitarEstaProvincia("Corrientes")
    luciana.habilitarEstaProvincia("Misiones")
@@ -46,4 +46,88 @@ describe "Test de etapa 1" {
    assert.notThat(donPedro.genteAcotada())
   }
 
+}
+
+
+describe "Pruebas del Sistema de Servicios Profesionales" {
+    
+    // Dejamos las variables listas para usar en todos los tests
+    // 1. Universidades
+    const unahur = new Universidad(provincia = "Buenos Aires", honorariosRecomedados = 2000)
+    const unl = new Universidad(provincia = "Santa Fe", honorariosRecomedados = 2500)
+    
+    // 2. Profesionales
+    const juana = new ProfesionalesViculados(universidad = unahur)
+    const pedro = new ProfesionalesAsociados(universidad = unl)
+    const roque = new ProfesioanlesLibre(universidad = unahur, honorariosPorHora = 5000, provinciaHabilitadas = ["Buenos Aires", "Córdoba"])
+    const nora = new ProfesioanlesLibre(universidad = unahur, honorariosPorHora = 1500, provinciaHabilitadas = ["Buenos Aires"]) // Más barata para el desafío
+    
+    // 3. Solicitantes
+    const ezequiel = new Personas(provincia = "Buenos Aires")
+    const bapro = new Instituciones(listaUniversidades = [unahur])
+    const clubItuzaingo = new Clubes(listaProvinicias = ["Santa Fe", "Entre Ríos"])
+    
+    // 4. Empresa
+    const empresaLitoral = new EmpresaDeServicios(honorarios = 3000)
+
+    // se ejecuta ANTES de cada test para contratar a la gente
+    method initialize() {
+        empresaLitoral.contratarA(juana)
+        empresaLitoral.contratarA(pedro)
+        empresaLitoral.contratarA(roque)
+    }
+
+    test "1. Validaciones de Profesionales y Dinero (Etapas 1 y 3)" {
+        // Testeos de honorarios y provincias base
+        assert.equals(2000, juana.honorariosPorHora())
+        assert.equals(["Buenos Aires"], juana.provinciasHabilitadas())
+        assert.equals(3000, pedro.honorariosPorHora())
+        
+        // Cobros del Vinculado (Juana le dona la mitad a la UNAHUR, ella no registra nada)
+        juana.cobrar(4000)
+        assert.equals(2000, unahur.donaciones())
+        
+        // Cobros del Asociado (Pedro le da todo a la Asociación del Litoral)
+        pedro.cobrar(5000)
+        assert.equals(5000, asociaciónProfesionalesLitoral.recaudado())
+        
+        // Cobros y pasaje de dinero entre Libres (Roque tiene 10000 y le pasa 4000 a Nora)
+        roque.cobrar(10000)
+        roque.pasarDinero(nora, 4000)
+        assert.equals(6000, roque.importeCobrado())
+        assert.equals(4000, nora.importeCobrado())
+    }
+
+    test "2. Validaciones de Atencion a Solicitantes (Etapa 2)" {
+        // Ezequiel vive en Buenos Aires, Juana puede atenderlo
+        assert.that(ezequiel.puedeSerAtendido(juana))
+        // El club Ituzaingó está en Santa Fe, Pedro (del Litoral) puede atenderlo
+        assert.that(clubItuzaingo.puedeSerAtendido(pedro))
+        // La empresa puede satisfacer a Ezequiel porque tiene a Juana
+        assert.that(empresaLitoral.satisfacerAlSolicitante(ezequiel))
+    }
+
+    test "3. Registro de Servicios y Desafío Final (Etapa 4)" {
+        // Al principio la empresa no tiene clientes
+        assert.equals(0, empresaLitoral.cuantosClientesTiene())
+        
+        // Damos un servicio a Ezequiel (Juana está habilitada)
+        empresaLitoral.darServicio(ezequiel)
+        
+        // Ahora la empresa tiene 1 cliente y es Ezequiel
+        assert.equals(1, empresaLitoral.cuantosClientesTiene())
+        assert.that(empresaLitoral.tieneComoClienteA(ezequiel))
+        
+        // --- TEST DEL DESAFÍO FINAL ---
+        // Roque cobra 5000 en Buenos Aires y Córdoba.
+        // Como la empresa NO TIENE a nadie en Córdoba que cobre más barato que él, Roque SÍ es atractivo.
+        assert.notThat(empresaLitoral.profesionalPocoAtractivo(roque))
+        
+        // Ahora contratamos a Nora, que trabaja en Buenos Aires y cobra solo 1500.
+        empresaLitoral.contratarA(nora)
+        
+        // Juana cobra 2000 en Buenos Aires. Como ahora está Nora (1500) cubriendo Buenos Aires más barato,
+        // ¡Juana pasa a ser POCO ATRACTIVA para la empresa!
+        assert.that(empresaLitoral.profesionalPocoAtractivo(juana))
+    }
 }
