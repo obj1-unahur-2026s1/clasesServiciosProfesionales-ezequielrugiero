@@ -1,14 +1,14 @@
 import serviciosProfesionales.*
 class Personas {
     var property provincia
-    method puedeSeratendido(unProfesional){
-        return unProfesional.proviciahabilitadas().contains(provincia)
+    method puedeSerAtendido(unProfesional){
+        return unProfesional.provinciaHabilitadas().contains(provincia)
     }
 }
 
 class Instituciones{
     var property listaUniversidades =[]
-      method puedeSeratendido(unProfesional){
+      method puedeSerAtendido(unProfesional){
         return listaUniversidades.contains(unProfesional.universidad())
     }
 }
@@ -18,8 +18,8 @@ class Clubes{
     
    
     
-    method puedeSeratendido(unProfesional){
-        return listaProvinicias.any({p=>unProfesional.proviciaHabilitadas().contains(p)})
+    method puedeSerAtendido(unProfesional){
+        return listaProvinicias.any({p=>unProfesional.provinciaHabilitadas().contains(p)})
     }
 
 }

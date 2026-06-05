@@ -1,8 +1,12 @@
 import solicitantes.*
 class Universidad{
-  var property provincia 
-  var property honorariosRecomedados
-  var property donaciones = 0
+  var  provincia 
+  var  honorariosRecomedados
+  var  donaciones = 0
+
+  method provincia ()= provincia
+  method honorariosRecomedados()= honorariosRecomedados
+  method donaciones()= donaciones
 
   method recibirDonaciones(unMonto){
     donaciones = donaciones + unMonto
@@ -11,15 +15,21 @@ class Universidad{
 }
 // Esta bien hacer todas las clase en un solo archivo
 class ProfesionalesViculados{
-   var property universidad 
-   var property provinciaHabilitadas = [universidad.provincia()]
-   var property importeCobrado = 0
+   var universidad 
+   const provinciaHabilitadas = [universidad.provincia()]
+   var importeCobrado = 0
+   method honorariosPorHora() = universidad.honorariosRecomedados() 
 
-   method honorariosPorHora() = universidad.honorariosRecomedados()
+
+   method universidad ()= universidad
+   method provinciaHabilitadas()=provinciaHabilitadas
+   method importeCobrado()=importeCobrado
+
+   
    method habilitarEstaProvincia(unaProvinicia){
     provinciaHabilitadas.add(unaProvinicia)
   }
-  method Cobrar(unImporte){
+  method cobrar(unImporte){
    const donacion =unImporte.div(2)
    universidad.recibirDonaciones(donacion)
    
@@ -28,46 +38,58 @@ class ProfesionalesViculados{
 }
 
 class ProfesionalesAsociados{
-  var property universidad
-  var property provinciaHabilitadas = ["Entre Rios", "Santa Fe", "corriente"]
-  var property importeCobrado = 0
+  var  universidad
+  const  provinciaHabilitadas = ["Entre Rios", "Santa Fe", "corriente"]
+  var  importeCobrado = 0
   method honorariosPorHora() = 3000
+
+  method universida ()= universidad
+  method provinciaHabilitadas()=provinciaHabilitadas
+  method importeCobrado()=importeCobrado
   
   method habilitarEstaProvincia(unaProvinicia){
     provinciaHabilitadas.add(unaProvinicia)
   }
 
-  method Cobrar(unImporte){
+  method cobrar(unImporte){
     asociaciónProfesionalesLitoral.recibirRecaudacion(unImporte)
   }
 
 }
 
 class ProfesioanlesLibre{
-  var property universidad 
-  var property provinciaHabilitadas 
-  var property honorariosPorHora
-  var property importeCobrado = 0
+  var universidad 
+  var provinciaHabilitadas 
+  var honorariosPorHora
+  var importeCobrado = 0
+
+  method universida ()= universidad
+  method provinciaHabilitadas()=provinciaHabilitadas
+  method importeCobrado()=importeCobrado
+  method honorariosPorHora()=honorariosPorHora
 
   method habilitarEstaProvincia(unaProvinicia){
     provinciaHabilitadas.add(unaProvinicia)
   }
 
-  method Cobrar(unImporte){
+  method cobrar(unImporte){
     importeCobrado = importeCobrado + unImporte
 
   }
 
   method pasarImporteAUnCompañero(unImporte, unCompañero){
-      unCompañero.Cobrar(unImporte)
+      unCompañero.cobrar(unImporte)
       importeCobrado = importeCobrado - unImporte
   }
 }
 
 class EmpresaDeServicios{
-  const property profesionales = []
-  var property honorarios
-  const property LisCliente =[]
+  const  profesionales = []
+  var  honorarios
+  const  LisCliente =[]
+
+
+  method honorarios()= honorarios
 
   method contratarA(unProfesiona){
     profesionales.add(unProfesiona)
@@ -94,12 +116,12 @@ class EmpresaDeServicios{
   }
 
   method satisfacerAlSolicitante(unSolicitante){
-      return profesionales.any({p=>unSolicitante.puedeSeratendido(p)})
+      return profesionales.any({p=>unSolicitante.puedeSerAtendido(p)})
   }
   // metodo 1, para mi es el correcto, pero se me ocurrio otro.
   method darServicio(unSolicitante){
     if(self.satisfacerAlSolicitante(unSolicitante)){
-       const profesionalAsignado = profesionales.find({p=>p.satisfacerAlSolicitante(unSolicitante)})
+       var profesionalAsignado = profesionales.find({p=>p.satisfacerAlSolicitante(unSolicitante)})
           profesionalAsignado.cobrar(profesionalAsignado.honorariosPorHora()+ 4000)
           LisCliente.add(unSolicitante)
     }
@@ -114,7 +136,7 @@ class EmpresaDeServicios{
     }
   }
 
-  method cunatosClienteTiene(){
+  method cuantosClientesTiene(){
     return LisCliente.size()
   }
 
@@ -125,12 +147,12 @@ class EmpresaDeServicios{
 // Las dos esta bien o una sola ? 
   method profesionalPocoActrativo(unProfesional){
     return profesionales.any({p=>p.provinciaHabilitadas()==unProfesional.provinciaHabilitadas() 
-           and p.honorarios()< unProfesional.honorarios()})
+           and p.honorariosPorHora()< unProfesional.honorariosPorHora()})
   }
 
   method profesionalPocoActrivo2(unProfesional){
     return unProfesional.provinciaHabilitadas().all({prov=>profesionales.any({p=>p.provinciaHabilitadas().contains(prov) 
-            and p.honorarios() < unProfesional.honorarios()})}) 
+            and p.honorariosPorHora() < unProfesional.honorariosPorHora()})}) 
     
   }
 // con contein no se puede hacer la comparacion.
