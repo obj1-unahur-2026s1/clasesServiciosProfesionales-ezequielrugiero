@@ -112,11 +112,11 @@ describe "Pruebas del Sistema de Servicios Profesionales" {
         assert.equals(0, empresaLitoral.cuantosClientesTiene())
         
         // Damos un servicio a Ezequiel (Juana está habilitada)
-       // empresaLitoral.darServicio2(ezequiel)
+        empresaLitoral.darServicio(ezequiel)
         
         // Ahora la empresa tiene 1 cliente y es Ezequiel
-        assert.equals(0, empresaLitoral.cuantosClientesTiene())
-        //assert.notThat(empresaLitoral.tieneComoClienteA(ezequiel))
+        assert.equals(1, empresaLitoral.cuantosClientesTiene())
+        assert.that(empresaLitoral.esEste(ezequiel))
         
         // --- TEST DEL DESAFÍO FINAL ---
         // Roque cobra 5000 en Buenos Aires y Córdoba.

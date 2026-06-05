@@ -121,7 +121,7 @@ class EmpresaDeServicios{
   // metodo 1, para mi es el correcto, pero se me ocurrio otro.
   method darServicio(unSolicitante){
     if(self.satisfacerAlSolicitante(unSolicitante)){
-       var profesionalAsignado = profesionales.find({p=>p.satisfacerAlSolicitante(unSolicitante)})
+       var profesionalAsignado = profesionales.find({p=>unSolicitante.puedeSerAtendido(p)})
           profesionalAsignado.cobrar(profesionalAsignado.honorariosPorHora()+ 4000)
           LisCliente.add(unSolicitante)
     }
